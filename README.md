@@ -69,15 +69,14 @@ dynamics.
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <font color="#27ae60"><strong>⚙️ Configurable recipes</strong></font>
 </p>
-
 <p align="center">
   <img src="docs/assets/multimodal-flow-architecture.png"
-       alt="Multimodal Flow architecture" width="94%">
+       alt="Multimodal Flow architecture" width="100%">
 </p>
+
 
 <p align="center"><em>Different modalities meet in one continuous,
 chunk-causal flow and return to their native spaces through their decoders.</em></p>
-
 During training, an ordered multimodal context is encoded into continuous
 hyperchunks and target chunks are predicted in parallel. During inference,
 completed chunks are generated sequentially and appended to the context. The
@@ -86,8 +85,9 @@ that move between them.
 
 <p align="center">
   <img src="docs/assets/mixed_multimodal_pretraining.png"
-       alt="Multimodal Flow training and inference" width="94%">
+       alt="Multimodal Flow training and inference" width="100%">
 </p>
+
 
 <p align="center"><em>Parallel target prediction during training and
 sequential continuation during inference.</em></p>
