@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install quality dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]" build
+      - name: Compile and build distributions
+        run: |
+          python -m compileall -q src
+          python -m build
+          python -m pip install --force-reinstall --no-deps dist/*.whl
+          mf --help
+          mf --version
+      - name: Check Python sources
+        run: python -m ruff check src

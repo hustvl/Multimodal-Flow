@@ -1,0 +1,71 @@
+extends: pretrain.yaml
+run:
+  name: mf_quickstart_0.6b
+  output_dir: outputs/quickstart_0.6b
+distributed:
+  world_size: 4
+  global_batch_size: 4
+optimizers:
+  muon_shard_group_size: 4
+model:
+  name: Multimodal Flow 0.6B
+  hidden_size: 1152
+  depth: 24
+  num_heads: 18
+  ffn_hidden_size: 3072
+  gradient_checkpointing: true
+  compile_packed_blocks: false
+codecs:
+  vision:
+    __replace__: true
+    name: Scale RAE SigLIP2
+    model_path: assets/siglip2-so400m-patch14-224
+    decoder_config_path: assets/scale-rae-decoder
+    decoder_checkpoint_path: assets/scale-rae-decoder/model.pt
+    encoder_trainable: false
+    decoder_trainable: false
+    encoder_input_resolution: 224
+    patch_size: 14
+    grid_size: [16, 16]
+    latent_tokens: 256
+    latent_dim: 1152
+data:
+  __replace__: true
+  input_mode: online
+  loader:
+    num_workers: 1
+    prefetch_factor: 2
+  bundle:
+    root: data/images
+    records_path: data/train.jsonl
+    image_to_text_instruction:
+      prompt: "Describe this image."
+      max_length: 64
+  text_max_length: 512
+  pad_is_inactive: true
+latent_stats:
+  vision:
+    path: assets/scale_rae_siglip2_so400m_gpic_train_resize_bicubic_v1.pt
+    mean_key: mean_img
+    std_key: std_img
+    expected_shape: [256, 1152]
+tasks:
+  chunk_pack:
+    sequence_length: 8192
+    token_budgets:
+      text_only: 2048
+      image_to_text: 1024
+      text_to_image: 768
+      image_only: 256
+flow:
+  text_block_causal:
+    flex_sequence_bucket_size: 8192
+    flex_prewarm_sequence_lengths: [8192]
+trainer:
+  checkpoint_root: outputs/quickstart_0.6b/checkpoints
+evaluation:
+  artifact_dir: outputs/quickstart_0.6b/eval
+  sampling:
+    codec_input_resolution: 224
+logging:
+  output_dir: outputs/quickstart_0.6b/logs

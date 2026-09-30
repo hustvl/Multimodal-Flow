@@ -1,0 +1,28 @@
+name: multimodal-flow
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - setuptools>=77
+  - wheel
+  - pip:
+      - numpy==2.3.1
+      - Pillow==10.4.0
+      - pyarrow==20.0.0
+      - pydantic==2.11.7
+      - PyYAML==6.0.3
+      - huggingface-hub==0.36.2
+      - safetensors==0.5.3
+      - tensorboard==2.20.0
+      - torch==2.8.0
+      - torchvision==0.23.0
+      - triton==3.4.0
+      - ninja==1.11.1.4
+      - flash-attn==2.8.3
+      - transformers==4.57.1
+      - typing_extensions==4.15.0
+      - sentencepiece==0.2.0
+      - protobuf==6.31.1
+      - -e .

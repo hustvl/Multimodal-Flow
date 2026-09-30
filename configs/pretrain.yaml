@@ -1,0 +1,213 @@
+run:
+  profile: formal
+  name: mf_pretrain
+  seed: 42
+  output_dir: outputs/mf_pretrain
+  experiment_key: mf_pretrain
+distributed:
+  backend: torchrun_ddp
+  # Local-first default. Increase together with global_batch_size when using
+  # multiple GPUs on one machine.
+  world_size: 4
+  micro_batch_size_per_rank: 1
+  gradient_accumulation_steps: 1
+  global_batch_size: 4
+  amp_dtype: bf16
+  process_group_timeout_seconds: 3600
+  ddp_static_graph: false
+  ddp_find_unused_parameters: true
+model:
+  name: Multimodal Flow 1.6B
+  hidden_size: 1600
+  depth: 32
+  num_heads: 25
+  head_dim: 64
+  ffn_hidden_size: 4224
+  attention_mode: shared
+  ffn_mode: modality_specific
+  fp32_boundaries: true
+  gradient_checkpointing: false
+  compile_packed_blocks: true
+  text_input_bottleneck_dim: 128
+  mrope_section:
+  - 8
+  - 12
+  - 12
+  text_decoder:
+    hidden_size: 512
+    depth: 6
+    num_heads: 8
+    head_dim: 64
+    mlp_ratio: 4.0
+    bottleneck_dim: 128
+    max_length: 8
+    vocab_size: 32128
+    decoder_noise_type: interpolate
+    decoder_noise_scale: 1.0
+    decoder_p_mean: 0.8
+    decoder_p_std: 0.8
+    use_attention_mask: false
+    input_space: normalized
+    checkpoint_path: assets/text_decoder.pt
+    trainable: false
+codecs:
+  online_encoding: true
+  vision:
+    model_path: assets/siglip2-so400m-patch14-224
+    decoder_config_path: assets/scale-rae-decoder
+    decoder_checkpoint_path: assets/scale-rae-decoder/model.pt
+    encoder_trainable: false
+    decoder_trainable: false
+    name: Scale RAE SigLIP2
+    image_preprocessing: siglip2_resize_bicubic_v1
+    encoder_input_resolution: 224
+    patch_size: 14
+    grid_size:
+    - 16
+    - 16
+    latent_tokens: 256
+    latent_dim: 1152
+  text:
+    name: T5-small
+    model_path: assets/t5-small
+    tokenizer_path: assets/t5-small
+    max_length: 512
+    latent_dim: 512
+    trainable: false
+latent_stats:
+  vision:
+    path: assets/vision_stats.pt
+    mean_key: mean_img
+    std_key: std_img
+    expected_shape:
+    - 256
+    - 1152
+  text_normal:
+    std: 0.2
+data:
+  input_mode: online
+  loader:
+    num_workers: 1
+    prefetch_factor: 2
+  image_text:
+    source: GPIC
+    root: data/gpic
+    split: train
+    caption_sampling:
+      strategy: uniform_over_available_types
+      missing_type_policy: sample_from_existing_types
+      caption_types:
+      - short
+      - medium
+      - long
+      seed_formula: run_seed+global_sample_index
+    corruption_policy:
+      warning_limit: 20
+  text:
+    ultrafineweb_multi_style:
+      root: data/ultrafineweb_multi_style
+      split: train
+      weight: 0.7
+    ultrafineweb_qa:
+      root: data/ultrafineweb_qa
+      split: train
+      weight: 0.25
+    gpic_caption_text:
+      root: data/gpic
+      split: train
+      weight: 0.05
+  text_max_length: 512
+  pad_is_inactive: true
+tasks:
+  planner: chunk_token_packed
+  weights:
+    text_to_image: 0.09
+    image_to_text: 0.2
+    text_only: 0.7
+    image_only: 0.01
+  chunk_pack:
+    sequence_length: 8192
+    allocation: elastic
+    exposure_basis: target_supervised_tokens
+    token_budgets:
+      text_to_image: 768
+      image_to_text: 1536
+      text_only: 5632
+      image_only: 256
+flow:
+  t_convention: clean_is_one
+  interpolation: x_t=t*x0+(1-t)*eps
+  training_objective: masked_velocity_mse
+  velocity_t_eps: 0.05
+  prediction: normalized_x0
+  latent_space: normalized
+  vision_noise_scale: 1.0
+  text_noise_scale: 2.0
+  text_block_causal:
+    flex_backend: triton
+    flex_sequence_bucket_size: 8192
+    flex_fixed_sequence_length: true
+    flex_prewarm_sequence_lengths:
+    - 8192
+    target_encoding: block_local
+    packing: block_aligned_eos
+    image_to_text_eos_stop: true
+  timestep_shift:
+    distribution: logit_normal
+    t_lognorm_mu: 0.0
+    t_lognorm_sigma: 1.0
+    image_alpha: 8.0
+    shift_on: noise_level
+optimizers:
+  muon_shard_group_size: 1
+  schedule:
+    warmup_steps: 4000
+    max_steps: 100000
+    schedule: cosine
+  backbone:
+    matrix_optimizer: Muon
+    fallback_optimizer: NesterovAdamW
+    peak_lr: 0.001
+    min_lr: 0.0002
+    weight_decay: 0.0
+  text_decoder:
+    optimizer: Muon
+    peak_lr: 0.001
+    min_lr: 0.0002
+    weight_decay: 0.0
+  ema:
+    enabled: true
+    decay: 0.9999
+    update_cadence: immediately_after_each_optimizer_step
+    use_for_evaluation: true
+trainer:
+  max_steps: 100000
+  max_grad_norm: 5.0
+  save_steps: 20000
+  eval_steps: 500000
+  eval_at_final_step: false
+  checkpoint_root: outputs/mf_pretrain/checkpoints
+  synchronous_evaluation: true
+evaluation:
+  artifact_dir: outputs/mf_pretrain/eval
+  sampling:
+    num_inference_steps: 64
+    cfg_scale: 3.0
+    method: sde
+    amp_dtype: bf16
+    checkpoint_target: ema
+    model_latent_shape:
+    - 256
+    - 1152
+    codec_input_resolution: 224
+    artifact_resolution: 512
+  image_to_text_target_length: 64
+logging:
+  enabled: true
+  backend: tensorboard
+  log_steps: 20
+  output_dir: outputs/mf_pretrain/logs
+  project: Multimodal Flow
+  async_writes: true
+  task_metric_log_steps: 100
+  dense_task_metric_steps: 200

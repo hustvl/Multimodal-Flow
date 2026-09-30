@@ -1,0 +1,61 @@
+extends: pretrain.yaml
+
+run:
+  name: mf_sft
+  output_dir: outputs/mf_sft
+  experiment_key: mf_sft
+
+model:
+  gradient_checkpointing: true
+  compile_packed_blocks: false
+
+sft:
+  enabled: true
+  text_to_image:
+    root: data/text_to_image_sft
+    format: huggingface
+    sources:
+    - blip3_ft60k
+    - dalle3
+    - sharegpt4o
+    weights:
+      blip3_ft60k: 0.06
+      dalle3: 0.016
+      sharegpt4o: 0.04
+    sharegpt4o_caption_file: sharegpt4o/text_to_image.json
+    sharegpt4o_max_tokens: 256
+  vqa:
+    dataset: llava_1_5_instruct
+    train_json: data/llava-1.5-instruct/llava_instruct_150k.json
+    image_root: data/coco
+    prompt_max_length: 32
+    answer_max_length: 512
+
+data:
+  image_text: null
+  text: null
+
+tasks:
+  weights:
+    text_to_image: 0.3
+    image_to_text: 0.7
+    text_only: 0.0
+    image_only: 0.0
+  chunk_pack:
+    sequence_length: 8192
+    allocation: elastic
+    exposure_basis: physical_tokens
+    token_budgets:
+      text_to_image: 8192
+      image_to_text: 8192
+      text_only: 0
+      image_only: 0
+
+optimizers:
+  muon_shard_group_size: 1
+  schedule:
+    max_steps: 20000
+
+trainer:
+  max_steps: 20000
+  save_steps: 10000

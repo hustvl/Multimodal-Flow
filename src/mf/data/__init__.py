@@ -1,0 +1,1 @@
+"""Deterministic multimodal data streams."""

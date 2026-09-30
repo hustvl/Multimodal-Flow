@@ -1,0 +1,32 @@
+extends: pretrain.yaml
+run:
+  name: mf_quickstart_1.6b
+  output_dir: outputs/quickstart_1.6b
+distributed:
+  world_size: 4
+  global_batch_size: 4
+model:
+  gradient_checkpointing: true
+  compile_packed_blocks: false
+data:
+  __replace__: true
+  input_mode: online
+  loader:
+    num_workers: 1
+    prefetch_factor: 2
+  bundle:
+    root: data/images
+    records_path: data/train.jsonl
+    image_to_text_instruction:
+      prompt: "Describe this image."
+      max_length: 64
+  text_max_length: 512
+  pad_is_inactive: true
+optimizers:
+  muon_shard_group_size: 4
+trainer:
+  checkpoint_root: outputs/quickstart_1.6b/checkpoints
+evaluation:
+  artifact_dir: outputs/quickstart_1.6b/eval
+logging:
+  output_dir: outputs/quickstart_1.6b/logs
