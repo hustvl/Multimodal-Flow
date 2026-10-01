@@ -35,7 +35,7 @@
 
 <p align="center">
   <a href="https://huggingface.co/hustvl/Multimodal-Flow"><img src="https://img.shields.io/badge/Model-Hugging%20Face-f39c12" alt="Hugging Face model"></a>
-  <a href="https://arxiv.org/abs/2609.40362"><img src="https://img.shields.io/static/v1?label=arXiv&amp;message=2609.40362&amp;color=b31b1b" alt="arXiv paper"></a>
+  <a href="https://arxiv.org/abs/2609.40362"><img src="https://img.shields.io/badge/arXiv-Paper-b31b1b" alt="arXiv paper"></a>
   <a href="#citation"><img src="https://img.shields.io/badge/Cite-BibTeX-8e44ad" alt="Citation"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-f39c12" alt="Apache-2.0 license"></a>
 </p>
