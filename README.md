@@ -154,14 +154,12 @@ If you use Multimodal Flow in your research, please cite the project and follow
 the licensing terms of all external assets.
 
 ```bibtex
-@misc{tao2026multimodalflow,
-  title        = {Multimodal Flow},
-  author       = {Tao, Hongyuan and Wang, Xinggang and Zhu, Lianghui and
-                  Li, Yongkang and Wei, Yunchao and Feng, Bin and
-                  Chen, Shaoyu and Zhang, Qian and Huang, Chang and Yu, Kai},
-  year         = {2026},
-  howpublished = {\url{https://github.com/hustvl/Multimodal-Flow}},
-  note         = {Paper and arXiv information to be added}
+@article{tao2026multimodalflow,
+  title={Multimodal Flow: Unified Flow Modeling of Language and Vision in Embedding Spaces},
+  author={Tao, Hongyuan and Wang, Xinggang and Zhu, Lianghui and Li, Yongkang and Wei, Yunchao and Feng, Bin and Chen, Shaoyu and Zhang, Qian and Huang, Chang and Yu, Kai},
+  journal={arXiv preprint arXiv:2609.40362},
+  year={2026},
+  url={https://arxiv.org/abs/2609.40362}
 }
 ```
 
