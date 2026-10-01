@@ -35,15 +35,15 @@
 
 <p align="center">
   <a href="https://huggingface.co/hustvl/Multimodal-Flow"><img src="https://img.shields.io/badge/Model-Hugging%20Face-f39c12" alt="Hugging Face model"></a>
-  <img src="https://img.shields.io/badge/arXiv-Paper-b31b1b" alt="arXiv paper">
+  <a href="https://arxiv.org/abs/2609.40362"><img src="https://img.shields.io/badge/arXiv-2609.40362-b31b1b" alt="arXiv paper"></a>
   <a href="#citation"><img src="https://img.shields.io/badge/Cite-BibTeX-8e44ad" alt="Citation"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-f39c12" alt="Apache-2.0 license"></a>
 </p>
 
 ## News
 
-- **Oct. 1, 2026:** We have released the first version of the Multimodal Flow
-  code. Welcome to try it and build on it!
+- **Oct. 1, 2026:** 🎉 Our [paper](https://arxiv.org/abs/2609.40362) is now available on arXiv! Check it out to learn more about Multimodal Flow.
+- **Oct. 1, 2026:** We have released the first version of the Multimodal Flow code. Welcome to try it and build on it!
 
 ## Table of Contents
 
