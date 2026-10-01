@@ -34,6 +34,7 @@
 </p>
 
 <p align="center">
+  <a href="https://hustvl.github.io/Multimodal-Flow/"><img src="https://img.shields.io/badge/Project-Page-2980b9" alt="Project page"></a>
   <a href="https://huggingface.co/hustvl/Multimodal-Flow"><img src="https://img.shields.io/badge/Model-Hugging%20Face-f39c12" alt="Hugging Face model"></a>
   <a href="https://arxiv.org/abs/2609.40362"><img src="https://img.shields.io/badge/arXiv-Paper-b31b1b" alt="arXiv paper"></a>
   <a href="#citation"><img src="https://img.shields.io/badge/Cite-BibTeX-8e44ad" alt="Citation"></a>
@@ -41,7 +42,7 @@
 </p>
 
 ## News
-
+- **Oct. 1, 2026:** 🌐 Our [project page](https://hustvl.github.io/Multimodal-Flow/) is live — an interactive walkthrough of the chunk formulation, the shared flow objective, and the sequences it admits.
 - **Oct. 1, 2026:** 🎉 Our [paper](https://arxiv.org/abs/2609.40362) is now available on arXiv! Check it out to learn more about Multimodal Flow.
 - **Oct. 1, 2026:** We have released the first version of the Multimodal Flow code. Welcome to try it and build on it!
 
