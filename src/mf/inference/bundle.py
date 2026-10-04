@@ -48,6 +48,7 @@ def _load_hf_model_state(
         name: tensor
         for name, tensor in state.items()
         if not name.startswith(_LATENT_STATS_PREFIX)
+        and name not in _LEGACY_REMOVED_MODEL_KEYS
     }
     assigned = model.load_state_dict(parameters, strict=False, assign=True)
     if set(assigned.missing_keys) != set(stats) or assigned.unexpected_keys:
