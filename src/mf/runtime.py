@@ -490,7 +490,7 @@ def new_model(config: object, stats: LatentStatsRegistry) -> MFModel:
         text_input_bottleneck_dim=model.text_input_bottleneck_dim,
         text_input_projection_mode=model.text_input_projection_mode,
         fp32_boundaries=model.fp32_boundaries,
-        gradient_checkpointing=model.gradient_checkpointing,
+        gradient_checkpointing=getattr(model, "gradient_checkpointing", False),
         compile_packed_blocks=model.compile_packed_blocks,
         sequence_layout=model.sequence_layout,
         image_chunk_conditioning=model.image_chunk_conditioning,

@@ -1,0 +1,157 @@
+/* MF-1 demo. Palette follows the project page: blue = text, green = vision,
+   purple = the shared flow backbone. All motion is CSS and is switched off
+   under prefers-reduced-motion. */
+
+:root {
+  --mf-ink: #171a1d;
+  --mf-muted: #5f6872;
+  --mf-line: #e3e6ea;
+  --mf-soft: #f6f7f9;
+  --mf-blue: #3f72b0;
+  --mf-blue-soft: #dde8f5;
+  --mf-green: #5d9b4b;
+  --mf-green-soft: #ddefd4;
+  --mf-purple: #7a6ba6;
+  --mf-purple-soft: #e7e2f3;
+  --mf-radius: 14px;
+  --mf-shadow: 0 2px 6px rgba(16, 24, 40, .06), 0 10px 28px rgba(16, 24, 40, .08);
+}
+
+.dark {
+  --mf-ink: #e8ecf1;
+  --mf-muted: #9aa3ad;
+  --mf-line: #2b3340;
+  --mf-soft: #161b24;
+  --mf-blue-soft: #1e2d44;
+  --mf-green-soft: #1d3320;
+  --mf-purple-soft: #2a2540;
+  --mf-shadow: 0 2px 6px rgba(0, 0, 0, .35), 0 10px 28px rgba(0, 0, 0, .4);
+}
+
+.gradio-container { max-width: 1180px !important; margin-left: auto !important; margin-right: auto !important; }
+
+/* NOTE: gradient colors must be literal hex values, not custom properties. Gradio's CSS handling drops a
+   background declaration whose gradient uses a variable, which hid the title text and the progress fill. */
+/* ───────────── title ───────────── */
+.mf-title { margin: 2px 0 4px; }
+.mf-title h1 { margin: 0; font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -.01em; color: var(--mf-ink); }
+.mf-title h1 span { background: linear-gradient(90deg, #3f72b0, #7a6ba6, #5d9b4b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mf-title p { margin: 2px 0 0; font-size: 14px; color: var(--mf-muted); }
+
+/* ───────────── explainer ───────────── */
+.mf-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 4px 0 8px; }
+.mf-step { padding: 14px 16px; border-radius: var(--mf-radius); border: 1px solid var(--mf-line); background: var(--mf-soft); }
+.mf-step b { display: block; margin-bottom: 4px; color: var(--mf-ink); }
+.mf-step p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--mf-muted); }
+.mf-step:nth-child(1) { border-top: 3px solid var(--mf-blue); }
+.mf-step:nth-child(2) { border-top: 3px solid var(--mf-purple); }
+.mf-step:nth-child(3) { border-top: 3px solid var(--mf-green); }
+@media (max-width: 720px) { .mf-steps { grid-template-columns: 1fr; } }
+
+/* ───────────── tabs ───────────── */
+button[role="tab"] { font-weight: 600 !important; border-bottom: 3px solid transparent !important; transition: color .2s ease, border-color .2s ease; }
+button[role="tab"][aria-selected="true"] { color: var(--mf-purple) !important; border-bottom-color: var(--mf-purple) !important; }
+
+/* The tab bar must not set the page width: without this, three bold tabs make phones zoom the page
+   out to ~520px. Containment ignores the row's content size; the row scrolls instead. */
+.tab-wrapper { contain: inline-size !important; width: 100% !important; }
+.tab-container:not(.visually-hidden) { overflow-x: auto !important; scrollbar-width: none; }
+.tab-container::-webkit-scrollbar { display: none; }
+button[role="tab"] { flex-shrink: 0 !important; white-space: nowrap; }
+@media (max-width: 640px) {
+  button[role="tab"] { padding: 8px 10px !important; font-size: 14px !important; }
+}
+
+.mf-lead { margin: 0 0 6px; color: var(--mf-muted); font-size: 15px; }
+
+/* ───────────── example chips ───────────── */
+.mf-chiprow { flex-wrap: wrap !important; gap: 8px !important; }
+.mf-chiprow > * { flex: 0 0 auto !important; width: auto !important; min-width: 0 !important; }
+.mf-chip {
+  white-space: nowrap !important; padding: 6px 14px !important; border-radius: 999px !important; font-size: 13px !important; font-weight: 500 !important;
+  background: var(--mf-soft) !important; color: var(--mf-ink) !important;
+  border: 1px solid var(--mf-line) !important; min-width: 0 !important; box-shadow: none !important;
+  transition: transform .15s ease, border-color .15s ease, background .15s ease !important;
+}
+.mf-chip:hover { transform: translateY(-2px); border-color: var(--mf-purple) !important; background: var(--mf-purple-soft) !important; }
+.mf-chip:active { transform: translateY(0) scale(.98); }
+
+/* ───────────── buttons ───────────── */
+button.primary { transition: transform .15s ease, box-shadow .15s ease !important; }
+button.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(95, 81, 144, .35) !important; }
+button.primary:active { transform: translateY(0) scale(.99); }
+
+/* ───────────── progress card ───────────── */
+.mf-progress {
+  padding: 12px 14px; border-radius: 12px; border: 1px solid var(--mf-line); background: var(--mf-soft);
+  animation: mf-fade .25s ease both;
+}
+.mf-progress-top { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; font-size: 14px; color: var(--mf-ink); }
+.mf-progress-top span:last-child { color: var(--mf-muted); font-variant-numeric: tabular-nums; }
+.mf-bar { position: relative; height: 8px; border-radius: 999px; overflow: hidden; background: var(--mf-line); }
+.mf-bar > i {
+  display: block; height: 100%; border-radius: 999px; transition: width .3s ease;
+  background: linear-gradient(90deg, #3f72b0, #7a6ba6, #5d9b4b); background-size: 200% 100%;
+  animation: mf-slide 2.2s linear infinite;
+}
+.mf-progress.indet .mf-bar > i { position: absolute; width: 35%; animation: mf-slide 2.2s linear infinite, mf-sweep 1.6s ease-in-out infinite; }
+.mf-progress.queued .mf-bar > i { background: var(--mf-muted); opacity: .5; }
+.mf-progress.error { border-color: #d98080; background: rgba(217, 128, 128, .12); }
+.mf-progress.cancelled { opacity: .85; }
+
+/* illustration shown while a live preview is not available */
+.mf-noise-wrap { margin-top: 10px; }
+.mf-noise {
+  height: 120px; border-radius: 10px; overflow: hidden;
+  background-color: #2b2f48;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  filter: blur(calc((1 - var(--p, 0)) * 9px)) saturate(calc(.3 + var(--p, 0) * .9));
+  animation: mf-grain .7s steps(4) infinite;
+}
+.mf-noise-cap { margin-top: 4px; font-size: 12px; color: var(--mf-muted); }
+
+/* ───────────── results ───────────── */
+.mf-result img { border-radius: var(--mf-radius); }
+.mf-fade { animation: mf-fade .35s ease both; }
+.mf-meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0; }
+.mf-meta span {
+  padding: 2px 10px; border-radius: 999px; font-size: 12px; color: var(--mf-ink);
+  background: var(--mf-blue-soft); font-variant-numeric: tabular-nums;
+}
+.mf-meta span:nth-child(2n) { background: var(--mf-purple-soft); }
+.mf-meta span:nth-child(3n) { background: var(--mf-green-soft); }
+
+.mf-answer {
+  padding: 16px 18px; border-radius: var(--mf-radius); border: 1px solid var(--mf-line);
+  border-left: 5px solid var(--mf-green); background: var(--mf-soft);
+  font-size: 16px; line-height: 1.65; white-space: pre-wrap; color: var(--mf-ink);
+  animation: mf-fade .35s ease both;
+}
+.mf-answer.text { border-left-color: var(--mf-blue); }
+.mf-question { margin: 0 0 8px; font-size: 13px; color: var(--mf-muted); }
+
+.mf-empty {
+  display: grid; place-items: center; min-height: 120px; border-radius: var(--mf-radius);
+  border: 1px dashed var(--mf-line); color: var(--mf-muted); font-size: 14px; text-align: center; padding: 16px;
+  background-color: var(--mf-soft);
+  background-image: linear-gradient(100deg, transparent 30%, rgba(122, 107, 166, .08) 50%, transparent 70%);
+  background-size: 200% 100%; animation: mf-shimmer 2.6s linear infinite;
+}
+
+/* ───────────── footer ───────────── */
+.mf-footer { margin-top: 10px; padding: 14px 4px; font-size: 13px; line-height: 1.6; color: var(--mf-muted); text-align: center; }
+.mf-footer a { color: var(--mf-purple); }
+
+/* ───────────── keyframes ───────────── */
+@keyframes mf-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes mf-slide { to { background-position: -200% 0; } }
+@keyframes mf-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(290%); } }
+@keyframes mf-shimmer { to { background-position: -200% 0; } }
+@keyframes mf-grain { 0% { background-position: 0 0; } 25% { background-position: -30px 20px; } 50% { background-position: 25px -35px; } 75% { background-position: -15px -10px; } 100% { background-position: 0 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mf-progress, .mf-answer, .mf-fade, .mf-empty, .mf-noise, .mf-bar > i, .mf-chip, button.primary {
+    animation: none !important; transition: none !important;
+  }
+  .mf-progress.indet .mf-bar > i { width: 100%; }
+}

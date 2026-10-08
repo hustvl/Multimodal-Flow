@@ -1,0 +1,2 @@
+# Only what the demo UI adds on top of the Multimodal Flow environment (environment.yaml).
+gradio==5.49.1
